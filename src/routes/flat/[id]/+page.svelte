@@ -3,28 +3,11 @@
 	export let data;
 	/** @type {{title:string, description:string}} */
 	export let rental = {...data.rental};
-	console.log('rental ', rental);
 	// import function to register Swiper custom elements
 	import { register } from 'swiper/element/bundle';
 	// register Swiper custom elements
 	register();
 	import 'swiper/css';
-
-	/** @type {{src: string, alt: string}[]} */
-	export let images = [
-		{
-			src: 'https://picsum.photos/seed/133/600/600',
-			alt: 'Flat living room'
-		},
-		{
-			src: 'https://picsum.photos/seed/341/600/600',
-			alt: 'Flat bathroom'
-		},
-		{
-			src: 'https://picsum.photos/seed/122/600/600',
-			alt: 'Flat kitchen'
-		}
-	];
 </script>
 <div class="md:grid md:grid-cols-2 md:grid-rows-1 md:gap-8">
 	<div class="gallery w-full">
