@@ -1,5 +1,3 @@
-import { config } from 'dotenv';
-config();
 import {
   browser, dev,
 } from '$app/environment';

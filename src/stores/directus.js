@@ -1,16 +1,18 @@
 import { writable } from 'svelte/store';
-import { config } from 'dotenv';
-config();
 import { Directus } from '@directus/sdk';
+import { 
+  DIRECTUS_URL,
+  DIRECTUS_TOKEN
+ } from '$env/static/private'
 
 
 function getDirectus() {
-  if(!process.env.DIRECTUS_URL || !process.env.DIRECTUS_TOKEN) {
+  if(!DIRECTUS_URL || !DIRECTUS_TOKEN) {
       throw new Error('Directus token not set');
   }
-  const directus = new Directus(process.env.DIRECTUS_URL);
+  const directus = new Directus(DIRECTUS_URL);
   
-  directus.auth.static(process.env.DIRECTUS_TOKEN).then(() => { 
+  directus.auth.static(DIRECTUS_TOKEN).then(() => { 
     console.log('Directus connected');
   });
 	
