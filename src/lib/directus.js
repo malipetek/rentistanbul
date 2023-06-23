@@ -23,8 +23,8 @@ const directus = new Directus(DIRECTUS_URL, {
   }
 });
 
-// directus.auth.static(process.env.DIRECTUS_TOKEN).then(() => {
-//   console.log('Authenticated');
-// });
+directus.auth.static(DIRECTUS_TOKEN).then(() => {
+  console.log('Authenticated');
+});
 
 export default directus;
