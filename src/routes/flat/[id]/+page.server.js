@@ -1,17 +1,19 @@
 import { error } from '@sveltejs/kit';
-import directus from '$lib/directus.js';
-import { BYPASS_TOKEN } from '$env/static/private';
+import { BYPASS_TOKEN, DIRECTUS_URL, DIRECTUS_TOKEN } from '$env/static/private';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
   try {
-    const data = await directus.items('rentals').readOne(params.id, {
-      deep: true, fields: [
-        'title',
-        'description',
-        'image',
-        'images.*']
+    const url = new URL(`${DIRECTUS_URL}/items/rentals/${params.id}`);
+    url.searchParams.append('fields', 'title,description,image,images.*');
+    const res = await fetch(url, {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${DIRECTUS_TOKEN}`
+      },
     });
+    const {data} = await res.json();
+    console.log('data ', data);
         return {
           params,
           rental: {
