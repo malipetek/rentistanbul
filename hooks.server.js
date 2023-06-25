@@ -15,7 +15,7 @@ import { env } from "$env/dynamic/private";
 //   return hookresponse({event, resolve});
 // }
 
-export const handle = previewMode({
-  previewSecret: env.PREVIEW_SECRET,
-  cookieName: '__prerender_bypass'
-});
+// export const handle = previewMode({
+//   previewSecret: env.PREVIEW_SECRET,
+//   cookieName: '__prerender_bypass'
+// });

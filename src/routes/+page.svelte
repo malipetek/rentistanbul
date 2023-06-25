@@ -1,5 +1,8 @@
 <script>
-    import FlatCard from "../components/flat-card.svelte";
+    export let data;
+    import Block from '../components/block.svelte';
 </script>
 
-  <FlatCard />
+{#each data.data.content as block}
+  <Block data={block} />
+{/each}

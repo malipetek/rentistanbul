@@ -1,11 +1,63 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { BYPASS_TOKEN, DIRECTUS_URL, DIRECTUS_TOKEN } from '$env/static/private';
+
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
+/** @type {import('./$types').Actions} */
+export const actions = {
+  default: async (event) => {
+    const body = await event.request.formData();
+    const bodyJSON = Object.fromEntries(body.entries());
+    
+    let startDate;
+    let endDate;
+    let errors = [];
+
+    startDate = new Date(bodyJSON.start_date);
+    if (!isValidDate(startDate)) {
+      errors.push('Start date is empty or invalid');
+    }
+    endDate = new Date(bodyJSON.end_date);
+    if (!isValidDate(endDate)) {
+      errors.push('End date is empty or invalid');
+    }
+    
+    if(bodyJSON.email === '') {
+      errors.push('Email is empty');
+    }
+
+    const res = await fetch(`${DIRECTUS_URL}/items/reservations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DIRECTUS_TOKEN}`
+      },
+      body: JSON.stringify({
+        status: 'request',
+        entry_date: startDate.toISOString(),
+        exit_date: endDate.toISOString(),
+        customer_email: bodyJSON.email,
+        rental: +bodyJSON.rental_id,
+      })
+    });
+
+    if (!res.ok) {
+      errors.push('Could not be saved, try again or contact us via email');
+    }
+
+    if (errors.length > 0) {
+      return fail(400, { errors: errors.join(', ') });
+    }
+    
+  }
+};
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
   try {
     const url = new URL(`${DIRECTUS_URL}/items/rentals/${params.id}`);
-    url.searchParams.append('fields', 'title,description,image,images.*');
+    url.searchParams.append('fields[]', 'id,title,description,address,image,images.*,price,icon1,icon2,icon3,icon4,text1,text2,text3,text4,location,available_start,available_end');
     const res = await fetch(url, {
       method: 'get',
       headers: {
@@ -13,12 +65,10 @@ export async function load({ params }) {
       },
     });
     const {data} = await res.json();
-    console.log('data ', data);
         return {
           params,
           rental: {
             ...data,
-            data,
             images: data.images.map(image => image.directus_files_id)
           }
         };
