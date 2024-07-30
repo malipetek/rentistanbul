@@ -2,16 +2,24 @@
 	import isFuture from 'date-fns/isFuture';
 	import differenceInDays from 'date-fns/differenceInDays';
 	import { enhance } from '$app/forms';
-
+  import 'swipe-scroller/style';
+	import {onMount} from 'svelte';
+  import Scroller from 'swipe-scroller/Scroller.svelte';
   /** @type {import('./$types').PageData} */
 	export let data;
 	/** @type {{title:string, description:string}} */
 	export let rental = {...data.rental};
-	// import function to register Swiper custom elements
-	import { register } from 'swiper/element/bundle';
-	// register Swiper custom elements
-	register();
-	import 'swiper/css';
+
+	let images = [rental.image, ...rental.images].map((id) => ({id, selected: false}));
+	$: images, console.log('images', images);
+	function selectThumbnail(id) {
+		images = [...images.map((img) => {
+			img.selected = img.id === id;
+			return img;
+		})];
+	}
+
+	$: images.find(img => img.selected ? img.container?.scrollIntoView?.call(img.container) : '')
 
 	import { DatePicker } from 'date-picker-svelte';
 	let start_date, end_date;
@@ -21,7 +29,6 @@
 	let avail_end_date = new Date(rental.available_end);
 	const dateDiffDays = differenceInDays(avail_end_date, avail_start_date);
 
-	import {onMount} from 'svelte';
     let mapComponent;
     import { Map, Geocoder, Marker, controls } from '@beyonk/svelte-mapbox'
     let lat = 41.0567073;
@@ -38,28 +45,26 @@
 </script>
 <div class="md:grid md:grid-cols-2 md:grid-rows-1 md:gap-8">
 	<div class="gallery w-full overflow-hidden">
-		<swiper-container class="mb-4 rounded-2xl overflow-hidden min-h-[100px]" thumbs-swiper=".thumbnails" loop="true" 
-		auto-height="true"
-		calculate-height="true">
-			{#each [rental.image, ...rental.images] as image, index}
-			<swiper-slide>
-				<img src={`https://directus-production-3791.up.railway.app/assets/${image}`} alt={image} />
-			</swiper-slide>
+		<Scroller class="mb-4 rounded-2xl overflow-hidden min-h-[100px]" >
+			{#each images as image, index}
+			<div class="max-w-full" bind:this={image.container}>
+				<img src={`https://rentistanbul.malipetek.dev/assets/${image.id}`} alt={image} />
+			</div>
 			{/each}
-		</swiper-container>
-		<swiper-container 
+		</Scroller>
+		<Scroller
 					class="thumbnails" 
 					loop="true" 
 					space-between="10" 
 					slides-per-view="4" 
 					free-mode="true"
 					watch-slides-progress="true">
-			{#each [rental.image, ...rental.images] as image, index}
-			<swiper-slide class="p-1 sm:p-4">
-				<img class="object-cover rounded-md" src={`https://directus-production-3791.up.railway.app/assets/${image}`} alt={image} />
-			</swiper-slide>
+			{#each images as image, index}
+			<div class="p-1 sm:p-4 w-1/3" on:click="{() => selectThumbnail(image.id)}">
+				<img class="object-cover rounded-md" src={`https://rentistanbul.malipetek.dev/assets/${image.id}`} alt={image} />
+			</div>
 			{/each}
-		</swiper-container>
+		</Scroller>
 		<div class="inline-flex w-auto grid grid-cols-4">
 			{#each [1,2,3,4] as i}
 				<div>
@@ -70,7 +75,7 @@
 		</div>
 	</div>
 	<article class="details mt-12 md:mt-0 px-4 md:px-0 lg:px-0">
-		<h1 class="text-4xl mb-4">{rental.title} <span class="price text-slate-600 text-lg">${rental.price}/night</span></h1>
+		<h1 class="text-4xl mb-4 text-black"> {rental.title} <span class="price text-slate-600 text-lg">${rental.price}/night</span></h1>
 		<h3 class="text-xl mb-4 text-slate-600">{rental.address}</h3>
 		<p>{@html rental.description}</p>
 		

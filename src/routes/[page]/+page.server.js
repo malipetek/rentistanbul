@@ -8,6 +8,7 @@ export async function load({ params, request }) {
     url.searchParams.append('filter[url][_eq]', `/${params.page}`);
     url.searchParams.append('fields[]', 'content.item:blocks.*');
 
+    console.log('url', params.page);
     const res = await fetch(url, {
       method: 'get',
       headers: {

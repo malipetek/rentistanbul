@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { BYPASS_TOKEN, DIRECTUS_URL, DIRECTUS_TOKEN } from '$env/static/private';
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ params }) {
+export async function load({ params, locals: { exitPreviewQueryParam, isPreview } }) {
   try {
     const url = new URL(`${DIRECTUS_URL}/items/menus`);
     url.searchParams.append('fields[]', 'id,name,links.item:links.*');
@@ -13,9 +13,10 @@ export async function load({ params }) {
       },
     });
     const { data } = await res.json();
-
         return {
-          menus: data
+          menus: data,
+          exitPreviewQueryParam,
+          isPreview,
         };
   } catch (err) {
     throw error(404, err.message);

@@ -2,6 +2,7 @@
 import typoegraphy from '@tailwindcss/typography';
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
+  darkmode: 'class',
   theme: {
     extend: {
       colors: {

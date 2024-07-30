@@ -13,6 +13,8 @@
       mapComponent.flyTo({center:[lng,lat], zoom}) // documentation (https://docs.mapbox.com/mapbox-gl-js/example/flyto)
     });
 
+    console.log(data);
+
 </script>
 
 <div class="map-container h-[80vh]">
