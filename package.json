@@ -39,7 +39,6 @@
 		"@directus/sdk": "^16.1.1",
 		"date-fns": "^2.30.0",
 		"date-picker-svelte": "^2.4.3",
-		"svelte-legos": "^0.2.1",
 		"svelte-material-icons": "^3.0.4",
 		"sveltekit-preview-mode": "^0.1.8",
 		"swipe-scroller": "^1.0.6"
